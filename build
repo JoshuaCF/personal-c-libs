@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Compile each C file in ./src using clang and generate a corresponding .o file in ./obj
+# Use -O3 optimization level
+
+for file in src/*.c; do
+	filename=$(basename -- "$file")
+	extension="${filename##*.}"
+	filename="${filename%.*}"
+	clang -c -O3 -o obj/$filename.o $file -I src/headers/*
+done
