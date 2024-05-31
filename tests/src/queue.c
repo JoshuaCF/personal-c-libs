@@ -4,6 +4,8 @@
 
 #include "queue.h"
 
+DECL_QUEUE(long long, ll)
+
 int main()
 {
 	printf("QUEUE TESTS\n");
@@ -57,6 +59,29 @@ int main()
 		printf("%d\n", num);
 	}
 	printf("\n");
+
+	printf("\nStart capacity: 5, using macro\n");
+	llQueue llq = llQueue_new(5);
+	printf("Queuing long longs 0-9\n");
+	for(long long i = 0; i < 10; i++)
+	{
+		llQueue_queue(&llq, i);
+	}
+	printf("Dequeuing and printing 12 times\n");
+	for(int i = 0; i < 12; i++)
+	{
+		long long ret;
+		switch(llQueue_next(&llq, &ret))
+		{
+			case QUEUE_ERR:
+				printf("Got QUEUE_ERR when dequeuing\n");
+				break;
+			case QUEUE_OK:
+				printf("%lld\n", ret);
+				break;
+		}
+	}
+	llQueue_free(&llq);
 
 	return 0;
 }
