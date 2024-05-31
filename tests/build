@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Compile each .c file in ./tests/src to an executable in ./tests/bin
+
+for file in tests/src/*.c; do
+	filename=$(basename -- "$file")
+	extension="${filename##*.}"
+	filename="${filename%.*}"
+	clang -O3 -o tests/bin/$filename $file src/*.c -I src/headers/
+done
