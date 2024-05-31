@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "headers/queue.h"
+#include "queue.h"
 
 struct _RawQueue _RawQueue_new(unsigned int item_size, unsigned int capacity)
 {
@@ -19,7 +19,7 @@ struct _RawQueue _RawQueue_new(unsigned int item_size, unsigned int capacity)
 }
 void* _RawQueue_next(struct _RawQueue* raw_queue)
 {
-	if(raw_queue->front == raw_queue->back) return NULL;
+	if(raw_queue->front == raw_queue->back && !raw_queue->full) return NULL;
 
 	void* next_item = raw_queue->data + raw_queue->front * raw_queue->item_size;
 	raw_queue->front = (raw_queue->front + 1) % raw_queue->capacity;
@@ -29,11 +29,7 @@ void* _RawQueue_next(struct _RawQueue* raw_queue)
 }
 void _RawQueue_queue(struct _RawQueue* raw_queue, void* item)
 {
-	if(raw_queue->full)
-	{
-		_RawQueue_realloc(raw_queue);
-		raw_queue->full = false;
-	}
+	if(raw_queue->full) _RawQueue_realloc(raw_queue);
 
 	void* addr = raw_queue->data + raw_queue->back * raw_queue->item_size;
 	memcpy(addr, item, raw_queue->item_size);
@@ -51,13 +47,20 @@ void _RawQueue_realloc(struct _RawQueue* raw_queue)
 	// Additionally, reallocations should only happen when full, so the entire queue's range will always be copied.
 	// Reassignment of front and back will, however, account for true size, allowing early reallocs.
 	unsigned int remaining = raw_queue->capacity - raw_queue->front;
-	memcpy(new_data, raw_queue->data + raw_queue->front, remaining * raw_queue->item_size);
+	memcpy(new_data, raw_queue->data + raw_queue->front * raw_queue->item_size, remaining * raw_queue->item_size);
 	memcpy(new_data + remaining * raw_queue->item_size, 
-		raw_queue->data, raw_queue->capacity - remaining * raw_queue->item_size);
-	unsigned int distance = raw_queue->back - raw_queue->front;
-	if(raw_queue->back < raw_queue->front) distance += raw_queue->capacity;
+		raw_queue->data, (raw_queue->capacity - remaining) * raw_queue->item_size);
+	unsigned int item_count = raw_queue->back - raw_queue->front;
+	if(raw_queue->back < raw_queue->front) item_count += raw_queue->capacity;
+	if(item_count == 0 && raw_queue->full) item_count = raw_queue->capacity;
 	raw_queue->front = 0;
-	raw_queue->back = distance;
+	raw_queue->back = item_count;
+
+	free(raw_queue->data);
+
+	raw_queue->data = new_data;
+	raw_queue->capacity = new_capacity;
+	raw_queue->full = false;
 }
 void _RawQueue_free(struct _RawQueue* raw_queue)
 {
