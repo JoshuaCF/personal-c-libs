@@ -29,7 +29,7 @@ enum QueueNextSuccess { QUEUE_OK, QUEUE_ERR };
 	enum QueueNextSuccess typename##Queue_next(typename##Queue* queue, type * out) \
 	{ \
 		type * retPtr = (type *) _RawQueue_next(queue); \
-		if(retPtr == NULL) return QUEUE_ERR; \
+		if(retPtr == 0) return QUEUE_ERR; \
 		*out = *retPtr; \
 		return QUEUE_OK; \
 	} \
