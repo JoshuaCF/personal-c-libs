@@ -112,11 +112,11 @@ void styleSetItalics() { printf("\e[3m"); }
 void styleResetItalics() { printf("\e[23m"); }
 void styleSetUnderline() { printf("\e[4m"); }
 void styleResetUnderlin() { printf("\e[24m"); }
-void styleSetBlinking() { printf("\e[5"); };
-void styleResetBlinking() { printf("\e[25"); }
-void styleSetInverse() { printf("\e[7"); }
-void styleResetInverse() { printf("\e[27"); }
-void styleSetHidden() { printf("\e[8"); }
+void styleSetBlinking() { printf("\e[5m"); };
+void styleResetBlinking() { printf("\e[25m"); }
+void styleSetInverse() { printf("\e[7m"); }
+void styleResetInverse() { printf("\e[27m"); }
+void styleSetHidden() { printf("\e[8m"); }
 void styleResetHidden() { printf("\e[28m"); }
 void styleSetStrikethrough() { printf("\e[9m"); }
 void styleResetStrikethrough() { printf("\e[29m"); }
