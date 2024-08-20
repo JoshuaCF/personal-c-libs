@@ -4,65 +4,64 @@
 
 #include "queue.h"
 
-struct _RawQueue _RawQueue_new(unsigned int item_size, unsigned int capacity)
-{
-	struct _RawQueue raw_queue;
+struct Queue Queue_new(unsigned int item_size, unsigned int capacity) {
+	struct Queue queue;
 
-	raw_queue.front = 0;
-	raw_queue.back = 0;
-	raw_queue.capacity = capacity;
-	raw_queue.item_size = item_size;
-	raw_queue.data = malloc(item_size * capacity);
-	raw_queue.full = false;
+	queue.front = 0;
+	queue.back = 0;
+	queue.capacity = capacity;
+	queue.item_size = item_size;
+	queue.data = malloc(item_size * capacity);
+	queue.full = false;
 
-	return raw_queue;
+	return queue;
 }
-void* _RawQueue_next(struct _RawQueue* raw_queue)
-{
-	if(raw_queue->front == raw_queue->back && !raw_queue->full) return NULL;
+enum QueueNextSuccess Queue_next(struct Queue* queue, void* out) {
+	if (queue->front == queue->back && !queue->full) return QUEUE_EMPTY;
 
-	void* next_item = raw_queue->data + raw_queue->front * raw_queue->item_size;
-	raw_queue->front = (raw_queue->front + 1) % raw_queue->capacity;
-	raw_queue->full = false;
+	void* next_item = queue->data + queue->front * queue->item_size;
+	queue->front = (queue->front + 1) % queue->capacity;
+	queue->full = false;
 
-	return next_item;
+	memcpy(out, next_item, queue->item_size);
+	return QUEUE_OK;
 }
-void _RawQueue_queue(struct _RawQueue* raw_queue, void* item)
+void Queue_queue(struct Queue* queue, void* item)
 {
-	if(raw_queue->full) _RawQueue_realloc(raw_queue);
+	if (queue->full) Queue_realloc(queue);
 
-	void* addr = raw_queue->data + raw_queue->back * raw_queue->item_size;
-	memcpy(addr, item, raw_queue->item_size);
-	raw_queue->back = (raw_queue->back + 1) % raw_queue->capacity;
-	raw_queue->full = raw_queue->back == raw_queue->front;
+	void* addr = queue->data + queue->back * queue->item_size;
+	memcpy(addr, item, queue->item_size);
+	queue->back = (queue->back + 1) % queue->capacity;
+	queue->full = queue->back == queue->front;
 }
-void _RawQueue_realloc(struct _RawQueue* raw_queue)
+void Queue_realloc(struct Queue* queue)
 {
-	unsigned int new_capacity = raw_queue->capacity * 2;
-	void* new_data = malloc(new_capacity * raw_queue->item_size);
+	unsigned int new_capacity = queue->capacity * 2;
+	void* new_data = malloc(new_capacity * queue->item_size);
 
 	// Moving the remaining part to the end and the beginning part to the start would leave a large gap
 	// in the middle, which is probably fine, but we can take the time to put the entire thing in 
 	// contiguously. Performance of moving should be the same, could *possibly* help with caching.
 	// Additionally, reallocations should only happen when full, so the entire queue's range will always be copied.
-	// Reassignment of front and back will, however, account for true size, allowing early reallocs.
-	unsigned int remaining = raw_queue->capacity - raw_queue->front;
-	memcpy(new_data, raw_queue->data + raw_queue->front * raw_queue->item_size, remaining * raw_queue->item_size);
-	memcpy(new_data + remaining * raw_queue->item_size, 
-		raw_queue->data, (raw_queue->capacity - remaining) * raw_queue->item_size);
-	unsigned int item_count = raw_queue->back - raw_queue->front;
-	if(raw_queue->back < raw_queue->front) item_count += raw_queue->capacity;
-	if(item_count == 0 && raw_queue->full) item_count = raw_queue->capacity;
-	raw_queue->front = 0;
-	raw_queue->back = item_count;
+	// Regardless, reassignment of front and back will account for true size, allowing early reallocs.
+	unsigned int remaining = queue->capacity - queue->front;
+	memcpy(new_data, queue->data + queue->front * queue->item_size, remaining * queue->item_size);
+	memcpy(new_data + remaining * queue->item_size, 
+		queue->data, (queue->capacity - remaining) * queue->item_size);
+	unsigned int item_count = queue->back - queue->front;
+	if (queue->back < queue->front) item_count += queue->capacity;
+	if (item_count == 0 && queue->full) item_count = queue->capacity;
+	queue->front = 0;
+	queue->back = item_count;
 
-	free(raw_queue->data);
+	free(queue->data);
 
-	raw_queue->data = new_data;
-	raw_queue->capacity = new_capacity;
-	raw_queue->full = false;
+	queue->data = new_data;
+	queue->capacity = new_capacity;
+	queue->full = false;
 }
-void _RawQueue_free(struct _RawQueue* raw_queue)
+void Queue_free(struct Queue* queue)
 {
-	free(raw_queue->data);
+	free(queue->data);
 }
