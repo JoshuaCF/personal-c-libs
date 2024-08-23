@@ -54,3 +54,24 @@ void displayRestore();
 
 void displayEnterAltBuffer();
 void displayLeaveAltBuffer();
+
+void styleSetModes();
+void styleResetModes();
+void styleSetBold();
+void styleResetBold();
+void styleSetDim();
+void styleResetDim();
+void styleSetItalics();
+void styleResetItalics();
+void styleSetUnderline();
+void styleResetUnderlin();
+void styleSetBlinking();
+void styleResetBlinking();
+void styleSetInverse();
+void styleResetInverse();
+void styleSetHidden();
+void styleResetHidden();
+void styleSetStrikethrough();
+void styleResetStrikethrough();
+void styleSetForegroundRGB(unsigned char r, unsigned char g, unsigned char b);
+void styleSetBackgroundRGB(unsigned char r, unsigned char g, unsigned char b);
