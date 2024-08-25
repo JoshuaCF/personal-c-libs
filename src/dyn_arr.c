@@ -32,3 +32,6 @@ void DynamicArray_remove(struct DynamicArray* array, size_t index) {
 		array->item_size * (array->num_elements - index)
 	);
 }
+void DynamicArray_free(struct DynamicArray* array) {
+	free(array->data);
+}

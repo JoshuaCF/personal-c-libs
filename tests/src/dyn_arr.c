@@ -43,5 +43,6 @@ int main() {
 	DynamicArray_remove(&numbers, 5);
 	print_array(numbers.data, numbers.num_elements);
 
+	DynamicArray_free(&numbers);
 	return 0;
 }
