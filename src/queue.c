@@ -4,7 +4,7 @@
 
 #include "queue.h"
 
-struct Queue Queue_new(unsigned int item_size, unsigned int capacity) {
+struct Queue Queue_new(size_t item_size, unsigned int capacity) {
 	struct Queue queue;
 
 	queue.front = 0;
@@ -26,17 +26,7 @@ enum QueueNextSuccess Queue_next(struct Queue* queue, void* out) {
 	memcpy(out, next_item, queue->item_size);
 	return QUEUE_OK;
 }
-void Queue_queue(struct Queue* queue, void* item)
-{
-	if (queue->full) Queue_realloc(queue);
-
-	void* addr = queue->data + queue->back * queue->item_size;
-	memcpy(addr, item, queue->item_size);
-	queue->back = (queue->back + 1) % queue->capacity;
-	queue->full = queue->back == queue->front;
-}
-void Queue_realloc(struct Queue* queue)
-{
+void Queue_realloc(struct Queue* queue) {
 	unsigned int new_capacity = queue->capacity * 2;
 	void* new_data = malloc(new_capacity * queue->item_size);
 
@@ -61,7 +51,14 @@ void Queue_realloc(struct Queue* queue)
 	queue->capacity = new_capacity;
 	queue->full = false;
 }
-void Queue_free(struct Queue* queue)
-{
+void Queue_queue(struct Queue* queue, void* item) {
+	if (queue->full) Queue_realloc(queue);
+
+	void* addr = queue->data + queue->back * queue->item_size;
+	memcpy(addr, item, queue->item_size);
+	queue->back = (queue->back + 1) % queue->capacity;
+	queue->full = queue->back == queue->front;
+}
+void Queue_free(struct Queue* queue) {
 	free(queue->data);
 }
