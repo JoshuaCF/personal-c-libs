@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "term_ctrl.h"
 #include "img.h"
 
 
@@ -22,18 +23,18 @@ struct ImageCharacter {
 	struct Color topColor, bottomColor;
 };
 void writeImageCharacter(struct ImageCharacter c) {
-	printf("\e[0m"); // reset
+	styleResetModes();
 	if (c.topHidden && c.bottomHidden) {
 		printf(" ");
 	} else if (c.bottomHidden) {
-		printf("\e[38;2;%hhu;%hhu;%hhum", c.topColor.r, c.topColor.g, c.topColor.b);	
+		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b);
 		printf("▀");
 	} else if (c.topHidden) {
-		printf("\e[38;2;%hhu;%hhu;%hhum", c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		styleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
 		printf("▄");
 	} else {
-		printf("\e[38;2;%hhu;%hhu;%hhum", c.topColor.r, c.topColor.g, c.topColor.b);	
-		printf("\e[48;2;%hhu;%hhu;%hhum", c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b);
+		styleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
 		printf("▀");
 	}
 }
@@ -62,7 +63,8 @@ void Image_draw(struct Image* img) {
 			}
 			writeImageCharacter(imgChar);
 		}
-		printf("\e[0m\n");
+		styleResetModes();
+		printf("\n");
 	}
 }
 

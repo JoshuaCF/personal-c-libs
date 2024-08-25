@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 enum TermColorStyle {
 	STYLE_FG_BLACK,
 	STYLE_FG_RED,

@@ -2,6 +2,9 @@
 
 #include <stddef.h>
 
+// Dependencies
+#include "term_ctrl.h"
+
 struct Color {
 	unsigned char r, g, b;
 };
