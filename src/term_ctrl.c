@@ -82,9 +82,9 @@ void cursorMoveUpToLeft(unsigned int lines) { printf("\e[%uF", lines); }
 void cursorMoveToCol(unsigned int col) { printf("\e[%uG", col); }
 
 // struct CursorPos cursorGetPosition();
-void cursorMoveOnceUpWithScroll() { printf("\e M"); }
-void cursorSavePosition() { printf("\e 7"); }
-void cursorRestorePosition() { printf("\e 8"); }
+void cursorMoveOnceUpWithScroll() { printf("\eM"); }
+void cursorSavePosition() { printf("\e7"); }
+void cursorRestorePosition() { printf("\e8"); }
 
 void cursorSetVisible(bool visible) { printf("\e[?25%c", visible ? 'h' : 'l'); }
 
