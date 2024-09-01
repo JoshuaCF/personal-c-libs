@@ -23,18 +23,18 @@ struct ImageCharacter {
 	struct Color topColor, bottomColor;
 };
 void writeImageCharacter(struct ImageCharacter c) {
-	styleResetModes();
+	styleResetModes(stdout);
 	if (c.topHidden && c.bottomHidden) {
 		printf(" ");
 	} else if (c.bottomHidden) {
-		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b);
+		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, stdout);
 		printf("▀");
 	} else if (c.topHidden) {
-		styleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		styleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, stdout);
 		printf("▄");
 	} else {
-		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b);
-		styleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, stdout);
+		styleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, stdout);
 		printf("▀");
 	}
 }
@@ -63,7 +63,7 @@ void Image_draw(struct Image* img) {
 			}
 			writeImageCharacter(imgChar);
 		}
-		styleResetModes();
+		styleResetModes(stdout);
 		printf("\n");
 	}
 }
