@@ -2,8 +2,12 @@
 #include <stdlib.h>
 
 #include "img.h"
+#include "term_ctrl.h"
 
 int main() {
+	cursorMoveToOrigin(stdout);
+	displayEraseAll(stdout);
+
 	struct Image img = Image_new(21, 21);
 
 	for (size_t y = 0; y < 21; y++) {
@@ -18,6 +22,10 @@ int main() {
 		}
 	}
 
+	Image_draw(&img);
+	cursorMoveTo(5, 30, stdout);
+	Image_draw(&img);
+	cursorMoveTo(8, 19, stdout);
 	Image_draw(&img);
 
 	Image_free(&img);

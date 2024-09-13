@@ -22,25 +22,30 @@ struct ImageCharacter {
 	bool topHidden, bottomHidden;
 	struct Color topColor, bottomColor;
 };
-void writeImageCharacter(struct ImageCharacter c) {
-	styleResetModes(stdout);
+int writeImageCharacter(struct ImageCharacter c, char* buf) {
+	char* start = buf;
+	buf += sStyleResetModes(buf);
 	if (c.topHidden && c.bottomHidden) {
-		printf(" ");
+		buf += sprintf(buf, " ");
 	} else if (c.bottomHidden) {
-		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, stdout);
-		printf("▀");
+		buf += sStyleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, buf);
+		buf += sprintf(buf, "▀");
 	} else if (c.topHidden) {
-		styleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, stdout);
-		printf("▄");
+		buf += sStyleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, buf);
+		buf += sprintf(buf, "▄");
 	} else {
-		styleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, stdout);
-		styleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, stdout);
-		printf("▀");
+		buf += sStyleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, buf);
+		buf += sStyleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, buf);
+		buf += sprintf(buf, "▀");
 	}
+	return buf-start;
 }
 
 void Image_draw(struct Image* img) {
-	printf("\n");
+	char buf[4096];
+	char* write_pos = buf;
+
+	flockfile(stdout);
 	for (size_t y = 0; y < img->height; y += 2) {
 		for (size_t x = 0; x < img->width; x++) {
 			struct ImageCharacter imgChar;
@@ -61,11 +66,19 @@ void Image_draw(struct Image* img) {
 					imgChar.bottomColor = curPixelBottom->col;
 				}
 			}
-			writeImageCharacter(imgChar);
+			write_pos += writeImageCharacter(imgChar, write_pos);
+			if (write_pos - buf < 256) {
+				printf("%s", buf);
+				write_pos = buf;
+			}
 		}
-		styleResetModes(stdout);
-		printf("\n");
+		write_pos += sStyleResetModes(write_pos);
+		write_pos += sCursorMoveLeft(img->width, write_pos);
+		write_pos += sCursorMoveDown(1, write_pos);
 	}
+	if (write_pos != buf)
+		printf("%s", buf);
+	funlockfile(stdout);
 }
 
 void Image_free(struct Image* img) {
