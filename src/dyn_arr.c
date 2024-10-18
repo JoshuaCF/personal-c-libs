@@ -25,12 +25,26 @@ void DynamicArray_remove(struct DynamicArray* array, size_t index) {
 	array->num_elements--;
 	if (array->num_elements == index) { return; }
 	size_t offset_dest = array->item_size * index;
+	size_t offset_src = array->item_size * array->num_elements;
+	memmove(
+		array->data + offset_dest,
+		array->data + offset_src,
+		array->item_size
+	);
+}
+void DynamicArray_removeOrdered(struct DynamicArray* array, size_t index) {
+	array->num_elements--;
+	if (array->num_elements == index) { return; }
+	size_t offset_dest = array->item_size * index;
 	size_t offset_src = array->item_size * (index + 1);
 	memmove(
 		array->data + offset_dest,
 		array->data + offset_src,
 		array->item_size * (array->num_elements - index)
 	);
+}
+void DynamicArray_clear(struct DynamicArray* array) {
+	array->num_elements = 0;
 }
 void DynamicArray_free(struct DynamicArray* array) {
 	free(array->data);
