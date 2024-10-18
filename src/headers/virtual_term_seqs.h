@@ -90,7 +90,7 @@ int bufWriteStyleResetDim(char* out);
 int bufWriteStyleSetItalics(char* out);
 int bufWriteStyleResetItalics(char* out);
 int bufWriteStyleSetUnderline(char* out);
-int bufWriteStyleResetUnderlin(char* out);
+int bufWriteStyleResetUnderline(char* out);
 int bufWriteStyleSetBlinking(char* out);;
 int bufWriteStyleResetBlinking(char* out);
 int bufWriteStyleSetInverse(char* out);

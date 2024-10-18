@@ -162,7 +162,7 @@ int bufWriteStyleResetDim(char* out) { return sprintf(out, "\033[22m"); }
 int bufWriteStyleSetItalics(char* out) { return sprintf(out, "\033[3m"); }
 int bufWriteStyleResetItalics(char* out) { return sprintf(out, "\033[23m"); }
 int bufWriteStyleSetUnderline(char* out) { return sprintf(out, "\033[4m"); }
-int bufWriteStyleResetUnderlin(char* out) { return sprintf(out, "\033[24m"); }
+int bufWriteStyleResetUnderline(char* out) { return sprintf(out, "\033[24m"); }
 int bufWriteStyleSetBlinking(char* out) { return sprintf(out, "\033[5m"); };
 int bufWriteStyleResetBlinking(char* out) { return sprintf(out, "\033[25m"); }
 int bufWriteStyleSetInverse(char* out) { return sprintf(out, "\033[7m"); }
