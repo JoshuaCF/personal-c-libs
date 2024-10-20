@@ -1,5 +1,6 @@
 #pragma once
 
+
 enum TermColorStyle {
 	STYLE_FG_DEFAULT,
 	STYLE_BG_DEFAULT,
