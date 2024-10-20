@@ -122,61 +122,61 @@ static const char * getStyleString(enum TermColorStyle style) {
 	}
 }
 
-int bufWriteCursorMoveToOrigin(char* out) { return sprintf(out, "\033[H"); }
-int bufWriteCursorMoveTo(char* out, unsigned int line, unsigned int col) { return sprintf(out, "\033[%u;%uf", line, col); }
-int bufWriteCursorMoveUp(char* out, unsigned int lines) { return sprintf(out, "\033[%uA", lines); }
-int bufWriteCursorMoveDown(char* out, unsigned int lines) { return sprintf(out, "\033[%uB", lines); }
-int bufWriteCursorMoveRight(char* out, unsigned int cols) { return sprintf(out, "\033[%uC", cols); }
-int bufWriteCursorMoveLeft(char* out, unsigned int cols) { return sprintf(out, "\033[%uD", cols); }
-int bufWriteCursorMoveDownToLeft(char* out, unsigned int lines) { return sprintf(out, "\033[%uE", lines); }
-int bufWriteCursorMoveUpToLeft(char* out, unsigned int lines) { return sprintf(out, "\033[%uF", lines); }
-int bufWriteCursorMoveToCol(char* out, unsigned int col) { return sprintf(out, "\033[%uG", col); }
+int bufWriteCursorMoveToOrigin(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[H"); }
+int bufWriteCursorMoveTo(char* out, size_t bufsz, unsigned int line, unsigned int col) { return snprintf(out, bufsz, "\033[%u;%uf", line, col); }
+int bufWriteCursorMoveUp(char* out, size_t bufsz, unsigned int lines) { return snprintf(out, bufsz, "\033[%uA", lines); }
+int bufWriteCursorMoveDown(char* out, size_t bufsz, unsigned int lines) { return snprintf(out, bufsz, "\033[%uB", lines); }
+int bufWriteCursorMoveRight(char* out, size_t bufsz, unsigned int cols) { return snprintf(out, bufsz, "\033[%uC", cols); }
+int bufWriteCursorMoveLeft(char* out, size_t bufsz, unsigned int cols) { return snprintf(out, bufsz, "\033[%uD", cols); }
+int bufWriteCursorMoveDownToLeft(char* out, size_t bufsz, unsigned int lines) { return snprintf(out, bufsz, "\033[%uE", lines); }
+int bufWriteCursorMoveUpToLeft(char* out, size_t bufsz, unsigned int lines) { return snprintf(out, bufsz, "\033[%uF", lines); }
+int bufWriteCursorMoveToCol(char* out, size_t bufsz, unsigned int col) { return snprintf(out, bufsz, "\033[%uG", col); }
 
-int bufWriteCursorGetPosition(char* out) { return sprintf(out, "\033[6n"); }
-int bufWriteCursorMoveOnceUpWithScroll(char* out) { return sprintf(out, "\033M"); }
-int bufWriteCursorSavePosition(char* out) { return sprintf(out, "\0337"); }
-int bufWriteCursorRestorePosition(char* out) { return sprintf(out, "\0338"); }
+int bufWriteCursorGetPosition(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[6n"); }
+int bufWriteCursorMoveOnceUpWithScroll(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033M"); }
+int bufWriteCursorSavePosition(char* out, size_t bufsz) { return snprintf(out, bufsz, "\0337"); }
+int bufWriteCursorRestorePosition(char* out, size_t bufsz) { return snprintf(out, bufsz, "\0338"); }
 
-int bufWriteCursorSetVisible(char* out) { return sprintf(out, "\033[?25h"); }
-int bufWriteCursorSetInvisible(char* out) { return sprintf(out, "\033[?25l"); }
+int bufWriteCursorSetVisible(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?25h"); }
+int bufWriteCursorSetInvisible(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?25l"); }
 
-int bufWriteDisplayEraseFromCursor(char* out) { return sprintf(out, "\033[0J"); }
-int bufWriteDisplayEraseToCursor(char* out) { return sprintf(out, "\033[1J"); }
-int bufWriteDisplayEraseAll(char* out) { return sprintf(out, "\033[2J"); }
-int bufWriteDisplayEraseSavedLines(char* out) { return sprintf(out, "\033[3J"); } // I don't know what this does?
-int bufWriteDisplayEraseLineFromCursor(char* out) { return sprintf(out, "\033[0K"); }
-int bufWriteDisplayEraseLineToCursor(char* out) { return sprintf(out, "\033[1K"); }
-int bufWriteDisplayEraseLine(char* out) { return sprintf(out, "\033[2K"); }
+int bufWriteDisplayEraseFromCursor(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[0J"); }
+int bufWriteDisplayEraseToCursor(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[1J"); }
+int bufWriteDisplayEraseAll(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[2J"); }
+int bufWriteDisplayEraseSavedLines(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[3J"); } // I don't know what this does?
+int bufWriteDisplayEraseLineFromCursor(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[0K"); }
+int bufWriteDisplayEraseLineToCursor(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[1K"); }
+int bufWriteDisplayEraseLine(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[2K"); }
 
-int bufWriteDisplaySave(char* out) { return sprintf(out, "\033[?47h"); }
-int bufWriteDisplayRestore(char* out) { return sprintf(out, "\033[?47l"); }
+int bufWriteDisplaySave(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?47h"); }
+int bufWriteDisplayRestore(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?47l"); }
 
-int bufWriteDisplayEnterAltBuffer(char* out) { return sprintf(out, "\033[?1049h"); }
-int bufWriteDisplayLeaveAltBuffer(char* out) { return sprintf(out, "\033[?1049l"); }
+int bufWriteDisplayEnterAltBuffer(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?1049h"); }
+int bufWriteDisplayLeaveAltBuffer(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[?1049l"); }
 
-int bufWriteStyleResetModes(char* out) { return sprintf(out, "\033[0m"); }
-int bufWriteStyleSetBold(char* out) { return sprintf(out, "\033[1m"); }
-int bufWriteStyleResetBold(char* out) { return sprintf(out, "\033[22m"); }
-int bufWriteStyleSetDim(char* out) { return sprintf(out, "\033[2m"); }
-int bufWriteStyleResetDim(char* out) { return sprintf(out, "\033[22m"); }
-int bufWriteStyleSetItalics(char* out) { return sprintf(out, "\033[3m"); }
-int bufWriteStyleResetItalics(char* out) { return sprintf(out, "\033[23m"); }
-int bufWriteStyleSetUnderline(char* out) { return sprintf(out, "\033[4m"); }
-int bufWriteStyleResetUnderline(char* out) { return sprintf(out, "\033[24m"); }
-int bufWriteStyleSetBlinking(char* out) { return sprintf(out, "\033[5m"); };
-int bufWriteStyleResetBlinking(char* out) { return sprintf(out, "\033[25m"); }
-int bufWriteStyleSetInverse(char* out) { return sprintf(out, "\033[7m"); }
-int bufWriteStyleResetInverse(char* out) { return sprintf(out, "\033[27m"); }
-int bufWriteStyleSetHidden(char* out) { return sprintf(out, "\033[8m"); }
-int bufWriteStyleResetHidden(char* out) { return sprintf(out, "\033[28m"); }
-int bufWriteStyleSetStrikethrough(char* out) { return sprintf(out, "\033[9m"); }
-int bufWriteStyleResetStrikethrough(char* out) { return sprintf(out, "\033[29m"); }
-int bufWriteStyleSetColor(char* out, enum TermColorStyle style) {
-	return sprintf(out, "\033[%sm", getStyleString(style));
+int bufWriteStyleResetModes(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[0m"); }
+int bufWriteStyleSetBold(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[1m"); }
+int bufWriteStyleResetBold(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[22m"); }
+int bufWriteStyleSetDim(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[2m"); }
+int bufWriteStyleResetDim(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[22m"); }
+int bufWriteStyleSetItalics(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[3m"); }
+int bufWriteStyleResetItalics(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[23m"); }
+int bufWriteStyleSetUnderline(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[4m"); }
+int bufWriteStyleResetUnderline(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[24m"); }
+int bufWriteStyleSetBlinking(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[5m"); };
+int bufWriteStyleResetBlinking(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[25m"); }
+int bufWriteStyleSetInverse(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[7m"); }
+int bufWriteStyleResetInverse(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[27m"); }
+int bufWriteStyleSetHidden(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[8m"); }
+int bufWriteStyleResetHidden(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[28m"); }
+int bufWriteStyleSetStrikethrough(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[9m"); }
+int bufWriteStyleResetStrikethrough(char* out, size_t bufsz) { return snprintf(out, bufsz, "\033[29m"); }
+int bufWriteStyleSetColor(char* out, size_t bufsz, enum TermColorStyle style) {
+	return snprintf(out, bufsz, "\033[%sm", getStyleString(style));
 }
-int bufWriteStyleSetForegroundRGB(char* out, unsigned char r, unsigned char g, unsigned char b) {
-	return sprintf(out, "\033[38;2;%hhu;%hhu;%hhum", r, g, b);
+int bufWriteStyleSetForegroundRGB(char* out, size_t bufsz, unsigned char r, unsigned char g, unsigned char b) {
+	return snprintf(out, bufsz, "\033[38;2;%hhu;%hhu;%hhum", r, g, b);
 }
-int bufWriteStyleSetBackgroundRGB(char* out, unsigned char r, unsigned char g, unsigned char b) {
-	return sprintf(out, "\033[48;2;%hhu;%hhu;%hhum", r, g, b);
+int bufWriteStyleSetBackgroundRGB(char* out, size_t bufsz, unsigned char r, unsigned char g, unsigned char b) {
+	return snprintf(out, bufsz, "\033[48;2;%hhu;%hhu;%hhum", r, g, b);
 }
