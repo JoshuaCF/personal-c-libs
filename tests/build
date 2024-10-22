@@ -6,5 +6,5 @@ for file in tests/src/*.c; do
 	filename=$(basename -- "$file")
 	extension="${filename##*.}"
 	filename="${filename%.*}"
-	clang -O0 -g -o tests/bin/$filename $file src/*.c -I src/headers/
+	clang -xc -std=gnu17 -O0 -g -o tests/bin/$filename $file src/*.c -I src/headers/
 done
