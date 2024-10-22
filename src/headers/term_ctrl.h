@@ -18,10 +18,10 @@
 // Win32 calls are used in favor of virtual terminal sequences for 
 // performance. Windows Terminal parses the sequences quite slowly.
 //
-// Actions can be executed in one of two ways: directly with an
-// associated function call, or batched into a `TermCtrlQueue` to run
-// as a group. The latter method is preferred when many actions are
-// performed, as it allows optimizations to be made.
+// Actions are executed by queuing them into a `TermCtrlQueue`
+// structure, then executing the batched actions. If few commands need
+// to be executed, this overhead must still be paid. The queue will
+// do its best to execute atomically and quickly.
 
 #include <stdint.h>
 #include <stdio.h>
@@ -44,14 +44,59 @@ struct TermCtrlQueue TermCtrlQueue_new(Terminal term);
 void TermCtrlQueue_exec(struct TermCtrlQueue* queue);
 void TermCtrlQueue_free(struct TermCtrlQueue* queue);
 
-void doTermCtrlWrite(Terminal term, char* str);
+// Queue actions
+void queueTermCtrlWriteString(struct TermCtrlQueue* queue, char* str);
+void queueTermCtrlWriteChar(struct TermCtrlQueue* queue, char c);
 
-void doTermCtrlStyleSetColor(Terminal term, enum TermColorStyle style);
-void doTermCtrlStyleSetForegroundRGB(Terminal term, uint8_t r, uint8_t g, uint8_t b);
-void doTermCtrlStyleSetBackgroundRGB(Terminal term, uint8_t r, uint8_t g, uint8_t b);
+void queueTermCtrlCursorMoveToOrigin(struct TermCtrlQueue* queue);
+void queueTermCtrlCursorMoveTo(struct TermCtrlQueue* queue, unsigned int line, unsigned int col);
+void queueTermCtrlCursorMoveUp(struct TermCtrlQueue* queue, unsigned int lines);
+void queueTermCtrlCursorMoveDown(struct TermCtrlQueue* queue, unsigned int lines);
+void queueTermCtrlCursorMoveRight(struct TermCtrlQueue* queue, unsigned int cols);
+void queueTermCtrlCursorMoveLeft(struct TermCtrlQueue* queue, unsigned int cols);
+void queueTermCtrlCursorMoveDownToLeft(struct TermCtrlQueue* queue, unsigned int lines);
+void queueTermCtrlCursorMoveUpToLeft(struct TermCtrlQueue* queue, unsigned int lines);
+void queueTermCtrlCursorMoveToCol(struct TermCtrlQueue* queue, unsigned int col);
 
-void queueTermCtrlWrite(struct TermCtrlQueue* queue, char* str);
+void queueTermCtrlCursorGetPosition(struct TermCtrlQueue* queue);
+void queueTermCtrlCursorMoveOnceUpWithScroll(struct TermCtrlQueue* queue);
+void queueTermCtrlCursorSavePosition(struct TermCtrlQueue* queue);
+void queueTermCtrlCursorRestorePosition(struct TermCtrlQueue* queue);
 
+void queueTermCtrlCursorSetVisible(struct TermCtrlQueue* queue);
+void queueTermCtrlCursorSetInvisible(struct TermCtrlQueue* queue);
+
+void queueTermCtrlDisplayEraseFromCursor(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseToCursor(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseAll(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseSavedLines(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseLineFromCursor(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseLineToCursor(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayEraseLine(struct TermCtrlQueue* queue);
+
+void queueTermCtrlDisplaySave(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayRestore(struct TermCtrlQueue* queue);
+
+void queueTermCtrlDisplayEnterAltBuffer(struct TermCtrlQueue* queue);
+void queueTermCtrlDisplayLeaveAltBuffer(struct TermCtrlQueue* queue);
+
+void queueTermCtrlStyleResetModes(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetBold(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetBold(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetDim(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetDim(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetItalics(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetItalics(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetUnderline(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetUnderline(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetBlinking(struct TermCtrlQueue* queue);;
+void queueTermCtrlStyleResetBlinking(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetInverse(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetInverse(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetHidden(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetHidden(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleSetStrikethrough(struct TermCtrlQueue* queue);
+void queueTermCtrlStyleResetStrikethrough(struct TermCtrlQueue* queue);
 void queueTermCtrlStyleSetColor(struct TermCtrlQueue* queue, enum TermColorStyle style);
 void queueTermCtrlStyleSetForegroundRGB(struct TermCtrlQueue* queue, uint8_t r, uint8_t g, uint8_t b);
 void queueTermCtrlStyleSetBackgroundRGB(struct TermCtrlQueue* queue, uint8_t r, uint8_t g, uint8_t b);
