@@ -22,30 +22,26 @@ struct ImageCharacter {
 	bool topHidden, bottomHidden;
 	struct Color topColor, bottomColor;
 };
-int writeImageCharacter(struct ImageCharacter c, char* buf) {
-	char* start = buf;
-	buf += sStyleResetModes(buf);
+void writeImageCharacter(struct ImageCharacter c, struct TermCtrlQueue* queue) {
+	queueTermCtrlStyleResetModes(queue);
 	if (c.topHidden && c.bottomHidden) {
-		buf += sprintf(buf, " ");
+		queueTermCtrlWriteChar(queue, ' ');
 	} else if (c.bottomHidden) {
-		buf += sStyleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, buf);
-		buf += sprintf(buf, "▀");
+		queueTermCtrlStyleSetForegroundRGB(queue, c.topColor.r, c.topColor.g, c.topColor.b);
+		queueTermCtrlWriteString(queue, "▀");
 	} else if (c.topHidden) {
-		buf += sStyleSetForegroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, buf);
-		buf += sprintf(buf, "▄");
+		queueTermCtrlStyleSetForegroundRGB(queue, c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		queueTermCtrlWriteString(queue, "▄");
 	} else {
-		buf += sStyleSetForegroundRGB(c.topColor.r, c.topColor.g, c.topColor.b, buf);
-		buf += sStyleSetBackgroundRGB(c.bottomColor.r, c.bottomColor.g, c.bottomColor.b, buf);
-		buf += sprintf(buf, "▀");
+		queueTermCtrlStyleSetForegroundRGB(queue, c.topColor.r, c.topColor.g, c.topColor.b);
+		queueTermCtrlStyleSetBackgroundRGB(queue, c.bottomColor.r, c.bottomColor.g, c.bottomColor.b);
+		queueTermCtrlWriteString(queue, "▀");
 	}
-	return buf-start;
 }
 
-void Image_draw(struct Image* img) {
-	char buf[4096];
-	char* write_pos = buf;
+void Image_draw(struct Image* img, Terminal term) {
+	struct TermCtrlQueue queue = TermCtrlQueue_new(term);
 
-	flockfile(stdout);
 	for (size_t y = 0; y < img->height; y += 2) {
 		for (size_t x = 0; x < img->width; x++) {
 			struct ImageCharacter imgChar;
@@ -66,19 +62,15 @@ void Image_draw(struct Image* img) {
 					imgChar.bottomColor = curPixelBottom->col;
 				}
 			}
-			write_pos += writeImageCharacter(imgChar, write_pos);
-			if (write_pos - buf < 256) {
-				printf("%s", buf);
-				write_pos = buf;
-			}
+			writeImageCharacter(imgChar, &queue);
 		}
-		write_pos += sStyleResetModes(write_pos);
-		write_pos += sCursorMoveLeft(img->width, write_pos);
-		write_pos += sCursorMoveDown(1, write_pos);
+		queueTermCtrlStyleResetModes(&queue);
+		queueTermCtrlCursorMoveLeft(&queue, img->width);
+		queueTermCtrlCursorMoveDown(&queue, 1);
 	}
-	if (write_pos != buf)
-		printf("%s", buf);
-	funlockfile(stdout);
+
+	TermCtrlQueue_exec(&queue);
+	TermCtrlQueue_free(&queue);
 }
 
 void Image_free(struct Image* img) {

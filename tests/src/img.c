@@ -1,12 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "img.h"
 #include "term_ctrl.h"
 
 int main() {
-	cursorMoveToOrigin(stdout);
-	displayEraseAll(stdout);
+	struct TermCtrlQueue queue = TermCtrlQueue_new(stdout);
+	queueTermCtrlCursorMoveToOrigin(&queue);
+	queueTermCtrlDisplayEraseAll(&queue);
+	TermCtrlQueue_exec(&queue);
 
 	struct Image img = Image_new(21, 21);
 
@@ -22,11 +23,13 @@ int main() {
 		}
 	}
 
-	Image_draw(&img);
-	cursorMoveTo(5, 30, stdout);
-	Image_draw(&img);
-	cursorMoveTo(8, 19, stdout);
-	Image_draw(&img);
+	Image_draw(&img, stdout);
+	queueTermCtrlCursorMoveTo(&queue, 5, 30);
+	TermCtrlQueue_exec(&queue);
+	Image_draw(&img, stdout);
+	queueTermCtrlCursorMoveTo(&queue, 8, 19);
+	TermCtrlQueue_exec(&queue);
+	Image_draw(&img, stdout);
 
 	Image_free(&img);
 }
